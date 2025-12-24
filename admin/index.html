@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login - Honda</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/admin.css">
+</head>
+
+<body class="login-page">
+    <div class="login-container">
+        <div class="login-card">
+            <h2>Painel Administrativo</h2>
+            <p>Faça login para gerenciar o site</p>
+            <form id="login-form">
+                <div class="form-group">
+                    <label>E-mail</label>
+                    <input type="email" id="username" placeholder="seu@email.com" required>
+                </div>
+                <div class="form-group">
+                    <label>Senha</label>
+                    <input type="password" id="password" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Entrar</button>
+                <div id="login-error" class="error-msg">Usuário ou senha inválidos.</div>
+            </form>
+        </div>
+    </div>
+    <!-- Supabase SDK -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../public/js/supabase-config.js"></script>
+    <script>
+        const form = document.getElementById('login-form');
+        const loginError = document.getElementById('login-error');
+
+        form.onsubmit = async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            loginError.style.display = 'none';
+
+            try {
+                // 1. Supabase Auth Login
+                const { data, error } = await supabase.auth.signInWithPassword({
+                    email,
+                    password
+                });
+
+                if (error) throw error;
+
+                // 2. Check Role in Profiles
+                const { data: profile, error: profileError } = await supabase
+                    .from('profiles')
+                    .select('role')
+                    .eq('id', data.user.id)
+                    .single();
+
+                if (profileError || !profile || profile.role !== 'admin') {
+                    // Sign out if not admin
+                    await supabase.auth.signOut();
+                    loginError.textContent = "Acesso negado: você não tem permissão de administrador.";
+                    loginError.style.display = 'block';
+                    return;
+                }
+
+                // 3. Success
+                window.location.href = 'dashboard.html';
+
+            } catch (err) {
+                console.error(err);
+                loginError.textContent = err.message || "Erro ao fazer login.";
+                loginError.style.display = 'block';
+            }
+        };
+
+        // Redirect if already logged in as admin
+        (async () => {
+            const { data: { session } } = await supabase.auth.getSession();
+            if (session) {
+                const { data: profile } = await supabase.from('profiles').select('role').eq('id', session.user.id).single();
+                if (profile?.role === 'admin') window.location.href = 'dashboard.html';
+            }
+        })();
+    </script>
+</body>
+
+</html>

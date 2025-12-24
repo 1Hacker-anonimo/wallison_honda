@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Admin Honda</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="css/admin.css">
+</head>
+
+<body>
+    <!-- Security removed from here, handled at bottom -->
+
+    <div class="admin-wrapper">
+        <aside class="sidebar">
+            <div class="brand">Admin Honda</div>
+            <nav>
+                <button class="nav-btn active" data-tab="seller"><i class="bi bi-person"></i> Vendedor</button>
+                <button class="nav-btn" data-tab="motos"><i class="bi bi-bicycle"></i> Motos</button>
+                <button class="nav-btn" data-tab="consortium"><i class="bi bi-calculator"></i> Consórcio</button>
+                <button class="nav-btn" data-tab="financing"><i class="bi bi-bank"></i> Financiamento</button>
+                <button class="nav-btn" id="btn-logout"><i class="bi bi-box-arrow-right"></i> Sair</button>
+            </nav>
+        </aside>
+
+        <main class="content">
+            <!-- Seller Tab -->
+            <div id="tab-seller" class="tab-content active">
+                <section class="admin-card">
+                    <h2>Dados do Vendedor</h2>
+                    <form id="seller-form">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Nome</label>
+                                <input type="text" id="edit-name">
+                            </div>
+                            <div class="form-group">
+                                <label>Foto de Perfil</label>
+                                <div style="display: flex; gap: 10px;">
+                                    <input type="text" id="edit-pic" placeholder="URL da Foto">
+                                    <input type="file" id="upload-pic" accept="image/*" style="width: auto;">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Bio</label>
+                            <textarea id="edit-bio"></textarea>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>WhatsApp (Ex: 558599...)</label>
+                                <input type="text" id="edit-whatsapp">
+                            </div>
+                            <div class="form-group">
+                                <label>Instagram (Usuário)</label>
+                                <input type="text" id="edit-instagram">
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Salvar Alterações</button>
+                    </form>
+                </section>
+
+                <section class="admin-card mt-2">
+                    <h2>Configurações do Site</h2>
+                    <form id="site-form">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Imagem do Banner</label>
+                                <div style="display: flex; gap: 10px;">
+                                    <input type="text" id="edit-banner" placeholder="URL do Banner">
+                                    <input type="file" id="upload-banner" accept="image/*" style="width: auto;">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Logo do Cabeçalho (Superior Direito)</label>
+                                <div style="display: flex; gap: 10px;">
+                                    <input type="text" id="edit-logo" placeholder="URL do Logo">
+                                    <input type="file" id="upload-logo" accept="image/*" style="width: auto;">
+                                </div>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Atualizar Banner</button>
+                    </form>
+                </section>
+            </div>
+
+            <!-- Motos Tab -->
+            <div id="tab-motos" class="tab-content">
+                <div class="header-actions">
+                    <h2>Gerenciar Motos</h2>
+                    <button class="btn btn-primary" id="btn-add-moto"><i class="bi bi-plus"></i> Nova Moto</button>
+                </div>
+                <div id="moto-list" class="moto-list">
+                    <!-- List of motos with Edit/Delete buttons -->
+                </div>
+            </div>
+
+            <!-- Consortium Tab -->
+            <div id="tab-consortium" class="tab-content">
+                <div class="header-actions">
+                    <h2>Planos de Consórcio</h2>
+                </div>
+                <p>Selecione uma moto para configurar seus planos de consórcio e repasse.</p>
+                <div id="consortium-moto-list" class="moto-list">
+                    <!-- List of motos with Configure button -->
+                </div>
+            </div>
+
+            <!-- Financing Tab -->
+            <div id="tab-financing" class="tab-content">
+                <section class="admin-card">
+                    <h2>Configurações de Financiamento</h2>
+                    <p>Configure os textos exibidos no modal de simulação de financiamento.</p>
+                    <form id="financing-config-form" class="mt-1">
+                        <div class="form-group">
+                            <label>Título do Modal</label>
+                            <input type="text" id="edit-fin-title">
+                        </div>
+                        <div class="form-group">
+                            <label>Bio/Frase de Chamada</label>
+                            <input type="text" id="edit-fin-bio">
+                        </div>
+                        <div class="form-group">
+                            <label>Texto "Como Funciona?"</label>
+                            <textarea id="edit-fin-how" rows="4"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>WhatsApp Destino (Opcional - Vazio usa o padrão)</label>
+                            <input type="text" id="edit-fin-wa" placeholder="Ex: 558599...">
+                        </div>
+                        <button type="submit" class="btn btn-primary">Salvar Configurações</button>
+                    </form>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <!-- Moto Edit Modal -->
+    <div id="moto-modal" class="modal">
+        <div class="modal-content">
+            <h2 id="moto-modal-title">Editar Moto</h2>
+            <form id="moto-form">
+                <input type="hidden" id="edit-moto-id">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Nome</label>
+                        <input type="text" id="edit-moto-name" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Categoria</label>
+                        <input type="text" id="edit-moto-cat">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Preço</label>
+                        <input type="text" id="edit-moto-price">
+                    </div>
+                    <div class="form-group">
+                        <label>Imagem Principal</label>
+                        <div style="display: flex; gap: 10px;">
+                            <input type="text" id="edit-moto-img" placeholder="URL da Imagem">
+                            <input type="file" id="upload-moto-img" accept="image/*" style="width: auto;">
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Descrição</label>
+                    <textarea id="edit-moto-desc"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Ficha Técnica (Ponto e vírgula separa as linhas)</label>
+                    <textarea id="edit-moto-specs"></textarea>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn" id="btn-close-moto">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Salvar Moto</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Consortium Config Modal -->
+    <div id="consortium-modal-admin" class="modal">
+        <div class="modal-content large">
+            <h2>Configurar Consórcio - <span id="conf-moto-name"></span></h2>
+            <form id="consortium-config-form">
+                <input type="hidden" id="conf-moto-id">
+
+                <div class="admin-grid">
+                    <!-- Part 1: General Consortium -->
+                    <div class="admin-card">
+                        <h3>Dados Gerais do Consórcio</h3>
+                        <div class="form-group">
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="conf-consortium-enabled"> Ativar botão "Planos de Consórcio"
+                            </label>
+                        </div>
+                        <div class="form-group">
+                            <label>Valor do Crédito</label>
+                            <input type="text" id="conf-consortium-credit" placeholder="Ex: 15.000,00">
+                        </div>
+                        <div class="form-group">
+                            <label>Texto Informativo</label>
+                            <textarea id="conf-consortium-text" rows="2"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>WhatsApp Destino (Opcional - Vazio usa o padrão)</label>
+                            <input type="text" id="conf-consortium-wa" placeholder="Ex: 558599...">
+                        </div>
+                    </div>
+
+                    <!-- Part 2: Repasse -->
+                    <div class="admin-card">
+                        <h3>Configurações de Repasse</h3>
+                        <div class="form-group">
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="conf-transfer-enabled"> Ativar botão "Quero repasse de
+                                consórcio"
+                            </label>
+                        </div>
+                        <div class="form-group">
+                            <label>Texto do Botão</label>
+                            <input type="text" id="conf-transfer-btn-text">
+                        </div>
+                        <div class="form-group">
+                            <label>Mensagem Automática WhatsApp</label>
+                            <textarea id="conf-transfer-msg" rows="3"></textarea>
+                            <small>Use {moto} para o nome da moto.</small>
+                        </div>
+                        <div class="form-group">
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="conf-transfer-mandatory"> Nome e Telefone obrigatórios
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Part 3: Plans List -->
+                <div class="admin-card mt-2">
+                    <div class="header-actions">
+                        <h3>Lista de Planos</h3>
+                        <button type="button" class="btn btn-sm btn-primary" id="btn-add-plan">
+                            <i class="bi bi-plus"></i> Adicionar Plano
+                        </button>
+                    </div>
+                    <div id="plans-container" class="plans-editor-grid">
+                        <!-- Plans will be added here -->
+                    </div>
+                </div>
+
+                <div class="modal-footer mt-2">
+                    <button type="button" class="btn" id="btn-close-conf">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Salvar Configurações</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Supabase SDK -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../public/js/supabase-config.js"></script>
+    <script>
+        // Secure Session Check
+        (async () => {
+            const { data: { session } } = await supabase.auth.getSession();
+            if (!session) {
+                window.location.href = 'index.html';
+                return;
+            }
+            const { data: profile } = await supabase.from('profiles').select('role').eq('id', session.user.id).single();
+            if (profile?.role !== 'admin') {
+                await supabase.auth.signOut();
+                window.location.href = 'index.html';
+            }
+        })();
+    </script>
+    <script src="js/admin.js"></script>
+</body>
+
+</html>
