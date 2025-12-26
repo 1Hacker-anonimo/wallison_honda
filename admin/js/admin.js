@@ -244,7 +244,7 @@ function setupAdminActions() {
 
     document.getElementById('btn-logout').onclick = async () => {
         await supabase.auth.signOut();
-        window.location.href = 'index.html';
+        window.location.href = '/admin/index.html';
     };
 }
 

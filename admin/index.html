@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Login - Honda</title>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/admin.css">
+    <link rel="stylesheet" href="/admin/css/admin.css">
 </head>
 
 <body class="login-page">
@@ -67,7 +67,7 @@
                 }
 
                 // 3. Success
-                window.location.href = 'dashboard.html';
+                window.location.href = '/admin/dashboard.html';
 
             } catch (err) {
                 console.error(err);
@@ -81,7 +81,7 @@
             const { data: { session } } = await supabase.auth.getSession();
             if (session) {
                 const { data: profile } = await supabase.from('profiles').select('role').eq('id', session.user.id).single();
-                if (profile?.role === 'admin') window.location.href = 'dashboard.html';
+                if (profile?.role === 'admin') window.location.href = '/admin/dashboard.html';
             }
         })();
     </script>
