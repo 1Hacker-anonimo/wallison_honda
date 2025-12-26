@@ -5,12 +5,6 @@ function getData() {
     return siteData;
 }
 
-// Simple Markdown Parser (currently only for **bold**)
-function parseMarkdown(text) {
-    if (!text) return '';
-    return text.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>');
-}
-
 // Helper to fix image paths
 function fixImagePath(path) {
     if (!path) return '';
@@ -109,32 +103,25 @@ window.showDetails = function (id) {
     // Description Formatting (Bold Titles)
     // Assuming description has sections separated by periods or already has strong tags
     // Here we wrap content to ensure bold headings look like the print
-    // Higher-level formatting for description
-    document.getElementById('modal-desc').innerHTML = parseMarkdown(moto.description || "Descrição em breve...");
+    document.getElementById('modal-desc').innerHTML = moto.description;
 
     // Specs Formatting (Key: Value)
     const specsContainer = document.getElementById('modal-specs');
     specsContainer.innerHTML = '';
     if (moto.specs) {
-        // Split by both semicolon and newline to be more flexible
-        const specLines = moto.specs.split(/[;\n]/);
+        const specLines = moto.specs.split(';');
         specLines.forEach(line => {
-            const trimmedLine = line.trim();
-            if (!trimmedLine) return;
-
-            const parts = trimmedLine.split(':');
+            if (!line.trim()) return;
+            const parts = line.split(':');
             if (parts.length > 1) {
                 const item = document.createElement('div');
                 item.className = 'spec-item';
-                // Make the key bold, keep the rest as is
-                const key = parts.shift().trim();
-                const value = parts.join(':').trim();
-                item.innerHTML = `<b>${key}:</b> ${parseMarkdown(value)}`;
+                item.innerHTML = `<b>${parts[0].trim()}:</b> ${parts[1].trim()}`;
                 specsContainer.appendChild(item);
             } else {
                 const item = document.createElement('div');
                 item.className = 'spec-item';
-                item.innerHTML = parseMarkdown(trimmedLine);
+                item.textContent = line.trim();
                 specsContainer.appendChild(item);
             }
         });

@@ -427,51 +427,36 @@ header.scrolled {
 }
 
 .modal-actions-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 10px;
-    margin: 1.5rem 1.8rem 2.5rem;
-}
-
-@media (min-width: 500px) {
-    .modal-actions-grid {
-        grid-template-columns: repeat(3, 1fr);
-    }
-}
-
-.btn-consortium-main,
-.btn-financing-main,
-.btn-whatsapp-main {
-    justify-content: center;
-    padding: 0.9rem 0.5rem;
-    font-size: 0.9rem;
-    border-radius: 8px; /* Slightly more squared like the print */
-    height: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+    margin-bottom: 2.5rem;
 }
 
 .btn-consortium-main,
 .btn-financing-main {
-    background: #D30000; /* Rich Red from print */
+    background: #cc0000;
     color: white;
+    justify-content: center;
+    padding: 1.1rem;
+    font-size: 1.1rem;
 }
 
 .btn-whatsapp-main {
-    background: #2AB08E; /* Mint Green from print */
+    background: #25D366;
     color: white;
-}
-
-.modal-actions-grid .btn i {
+    justify-content: center;
+    padding: 1.1rem;
     font-size: 1.1rem;
-    margin-right: 5px;
 }
 
 .btn-consortium-main:hover,
 .btn-financing-main:hover {
-    background: #B30000;
+    background: #b30000;
 }
 
 .btn-whatsapp-main:hover {
-    background: #249A7D;
+    background: #128C7E;
 }
 
 .modal-details-text {
@@ -498,20 +483,20 @@ header.scrolled {
 }
 
 .specs-section h3 {
-    font-size: 1.1rem;
-    font-weight: 800;
-    margin-bottom: 1rem;
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin-bottom: 1.2rem;
     color: #333;
 }
 
 #modal-specs {
-    font-size: 0.85rem;
-    line-height: 1.6;
+    font-size: 0.95rem;
+    line-height: 1.8;
     color: #444;
 }
 
 #modal-specs .spec-item {
-    margin-bottom: 3px;
+    margin-bottom: 0.3rem;
 }
 
 #modal-specs b {

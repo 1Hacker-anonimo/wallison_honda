@@ -2,9 +2,6 @@
  * SUPABASE ADMIN JS
  */
 
-const supabase = window.supabase;
-let currentMotoId = null;
-
 document.addEventListener('DOMContentLoaded', async () => {
     try {
         // 1. Check Auth
