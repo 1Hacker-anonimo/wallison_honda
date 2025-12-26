@@ -5,6 +5,12 @@ function getData() {
     return siteData;
 }
 
+// Simple Markdown Parser (currently only for **bold**)
+function parseMarkdown(text) {
+    if (!text) return '';
+    return text.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>');
+}
+
 // Helper to fix image paths
 function fixImagePath(path) {
     if (!path) return '';
@@ -122,7 +128,7 @@ window.showDetails = function (id) {
                 // Make the key bold, keep the rest as is
                 const key = parts.shift().trim();
                 const value = parts.join(':').trim();
-                item.innerHTML = `<b>${key}:</b> ${value}`;
+                item.innerHTML = `<b>${key}:</b> ${parseMarkdown(value)}`;
                 specsContainer.appendChild(item);
             } else {
                 const item = document.createElement('div');

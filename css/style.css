@@ -449,13 +449,29 @@ header.scrolled {
     height: 100%;
 }
 
+.btn-consortium-main,
+.btn-financing-main {
+    background: #D30000; /* Rich Red from print */
+    color: white;
+}
+
+.btn-whatsapp-main {
+    background: #2AB08E; /* Mint Green from print */
+    color: white;
+}
+
+.modal-actions-grid .btn i {
+    font-size: 1.1rem;
+    margin-right: 5px;
+}
+
 .btn-consortium-main:hover,
 .btn-financing-main:hover {
-    background: #b30000;
+    background: #B30000;
 }
 
 .btn-whatsapp-main:hover {
-    background: #128C7E;
+    background: #249A7D;
 }
 
 .modal-details-text {
