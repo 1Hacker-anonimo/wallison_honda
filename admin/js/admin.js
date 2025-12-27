@@ -1,19 +1,31 @@
-const supabase = window.supabase;
+// Get Supabase client from global config
+const getSupabase = () => window.supabase;
 let currentMotoId = null;
 let currentGallery = [];
 
 document.addEventListener('DOMContentLoaded', async () => {
-    try {
-        // 1. Check Auth
-        const { data: { session } } = await supabase.auth.getSession();
-        if (!session) return;
+    // 1. Initial UI Setup (Run this immediately so buttons work)
+    setupTabSwitching();
 
-        // 2. Initial UI Setup (Run this immediately)
-        setupTabSwitching();
+    const supabase = getSupabase();
+    if (!supabase) {
+        console.error("Supabase client not initialized via window.supabase");
+        return;
+    }
+
+    try {
+        // 2. Check Auth
+        const { data: { session } } = await supabase.auth.getSession();
+        if (!session) {
+            window.location.href = '/admin/index.html';
+            return;
+        }
+
+        // 3. Other Setup
         setupAdminActions();
         setupConsortiumActions();
 
-        // 3. Data Load
+        // 4. Data Load
         await refreshData();
     } catch (err) {
         console.error("Initialization error:", err);
@@ -23,6 +35,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 let cachedData = null;
 
 async function refreshData() {
+    const supabase = getSupabase();
     try {
         cachedData = await fetchAllData();
 
@@ -39,6 +52,7 @@ async function refreshData() {
 }
 
 async function fetchAllData() {
+    const supabase = getSupabase();
     // Simple fetcher for admin
     const { data: perfil } = await supabase.from('perfil_vendedor').select('*').single();
     const { data: motos } = await supabase.from('motos').select('*').order('order', { ascending: true });
@@ -120,6 +134,7 @@ function loadConsortiumList(motos) {
  * IMAGE UPLOAD HELPER 
  */
 async function handleUpload(fileInputId, urlInputId, bucket) {
+    const supabase = getSupabase();
     const fileInput = document.getElementById(fileInputId);
     if (!fileInput.files || fileInput.files.length === 0) return null;
 
@@ -145,6 +160,7 @@ async function handleUpload(fileInputId, urlInputId, bucket) {
 
 // Gallery Upload Handler
 async function handleGalleryUpload(files) {
+    const supabase = getSupabase();
     const uploadedUrls = [];
     for (const file of files) {
         const fileName = `${Date.now()}_${file.name.replace(/\s/g, '_')}`;
@@ -190,8 +206,10 @@ window.removeGalleryImage = (index) => {
 };
 
 function setupAdminActions() {
+    const supabase = getSupabase();
     // Seller + Banner unified save (or separate)
-    document.getElementById('seller-form').onsubmit = async (e) => {
+    const sellerForm = document.getElementById('seller-form');
+    if (sellerForm) sellerForm.onsubmit = async (e) => {
         e.preventDefault();
 
         // Upload if file selected
@@ -212,7 +230,8 @@ function setupAdminActions() {
         else alert("Dados salvos!");
     };
 
-    document.getElementById('site-form').onsubmit = async (e) => {
+    const siteForm = document.getElementById('site-form');
+    if (siteForm) siteForm.onsubmit = async (e) => {
         e.preventDefault();
         await handleUpload('upload-banner', 'edit-banner', 'banners');
         await handleUpload('upload-logo', 'edit-logo', 'extras');
@@ -230,7 +249,8 @@ function setupAdminActions() {
         else alert("Configurações atualizadas!");
     };
 
-    document.getElementById('financing-config-form').onsubmit = async (e) => {
+    const finForm = document.getElementById('financing-config-form');
+    if (finForm) finForm.onsubmit = async (e) => {
         e.preventDefault();
         const updates = {
             id: 1,
@@ -248,7 +268,8 @@ function setupAdminActions() {
     };
 
     // Moto Modal
-    document.getElementById('btn-add-moto').onclick = () => {
+    const btnAddMoto = document.getElementById('btn-add-moto');
+    if (btnAddMoto) btnAddMoto.onclick = () => {
         document.getElementById('moto-form').reset();
         document.getElementById('edit-moto-id').value = '';
         document.getElementById('moto-modal-title').textContent = 'Nova Moto';
@@ -257,7 +278,8 @@ function setupAdminActions() {
         document.getElementById('moto-modal').style.display = 'block';
     };
 
-    document.getElementById('upload-moto-gallery').onchange = async (e) => {
+    const galleryInput = document.getElementById('upload-moto-gallery');
+    if (galleryInput) galleryInput.onchange = async (e) => {
         const files = e.target.files;
         if (!files.length) return;
 
@@ -268,11 +290,13 @@ function setupAdminActions() {
         e.target.value = ''; // clear input
     };
 
-    document.getElementById('btn-close-moto').onclick = () => {
+    const btnCloseMoto = document.getElementById('btn-close-moto');
+    if (btnCloseMoto) btnCloseMoto.onclick = () => {
         document.getElementById('moto-modal').style.display = 'none';
     };
 
-    document.getElementById('moto-form').onsubmit = async (e) => {
+    const motoForm = document.getElementById('moto-form');
+    if (motoForm) motoForm.onsubmit = async (e) => {
         e.preventDefault();
         const id = document.getElementById('edit-moto-id').value;
 
@@ -302,7 +326,8 @@ function setupAdminActions() {
         document.getElementById('moto-modal').style.display = 'none';
     };
 
-    document.getElementById('btn-logout').onclick = async () => {
+    const btnLogout = document.getElementById('btn-logout');
+    if (btnLogout) btnLogout.onclick = async () => {
         await supabase.auth.signOut();
         window.location.href = '/admin/index.html';
     };
@@ -326,6 +351,7 @@ window.editMoto = (id) => {
 };
 
 window.deleteMoto = async (id) => {
+    const supabase = getSupabase();
     if (confirm('Deseja remover esta moto?')) {
         const { error } = await supabase.from('motos').delete().eq('id', id);
         if (error) alert(error.message);
@@ -337,16 +363,19 @@ window.deleteMoto = async (id) => {
  * CONSORTIUM LOGIC
  */
 function setupConsortiumActions() {
+    const supabase = getSupabase();
     const form = document.getElementById('consortium-config-form');
-    document.getElementById('btn-close-conf').onclick = () => {
+    const btnCloseConf = document.getElementById('btn-close-conf');
+    if (btnCloseConf) btnCloseConf.onclick = () => {
         document.getElementById('consortium-modal-admin').style.display = 'none';
     };
 
-    document.getElementById('btn-add-plan').onclick = () => {
+    const btnAddPlan = document.getElementById('btn-add-plan');
+    if (btnAddPlan) btnAddPlan.onclick = () => {
         renderPlanRow({ parcelas: '', valor: '' });
     };
 
-    form.onsubmit = async (e) => {
+    if (form) form.onsubmit = async (e) => {
         e.preventDefault();
         const motoId = document.getElementById('conf-moto-id').value;
         const moto = cachedData.motorcycles.find(m => m.id == motoId);
