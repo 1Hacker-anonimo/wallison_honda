@@ -181,11 +181,20 @@
 
                 <div class="form-group">
                     <label>Descrição</label>
-                    <textarea id="edit-moto-desc"></textarea>
+                    <div class="textarea-toolbar">
+                        <button type="button" class="btn-tool"
+                            onclick="formatText('edit-moto-desc', 'bold')"><b>B</b></button>
+                    </div>
+                    <textarea id="edit-moto-desc" rows="5"></textarea>
                 </div>
                 <div class="form-group">
-                    <label>Ficha Técnica (Ponto e vírgula separa as linhas)</label>
-                    <textarea id="edit-moto-specs"></textarea>
+                    <label>Ficha Técnica (Use uma linha por especificação no formato Nome: Valor)</label>
+                    <div class="textarea-toolbar">
+                        <button type="button" class="btn-tool"
+                            onclick="formatText('edit-moto-specs', 'bold')"><b>B</b></button>
+                    </div>
+                    <textarea id="edit-moto-specs" rows="10"></textarea>
+                    <small>Exemplo:<br>Motor: 160cc<br>Tanque: 16 litros</small>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn" id="btn-close-moto">Cancelar</button>

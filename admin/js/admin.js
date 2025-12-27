@@ -215,6 +215,21 @@ window.removeGalleryImage = (index) => {
     renderGalleryAdmin();
 };
 
+window.formatText = (id, type) => {
+    const el = document.getElementById(id);
+    const start = el.selectionStart;
+    const end = el.selectionEnd;
+    const text = el.value;
+    const selected = text.substring(start, end);
+
+    if (type === 'bold') {
+        const replacement = `**${selected}**`;
+        el.value = text.substring(0, start) + replacement + text.substring(end);
+        el.selectionStart = el.selectionEnd = start + replacement.length;
+    }
+    el.focus();
+};
+
 function setupAdminActions() {
     const supabase = getSupabase();
     // Seller + Banner unified save (or separate)
@@ -328,6 +343,9 @@ function setupAdminActions() {
             const { error } = await supabase.from('motos').update(motoObj).eq('id', id);
             if (error) alert(error.message);
         } else {
+            // New moto: set default active and order
+            motoObj.ativo = true;
+            motoObj.order = cachedData.motorcycles.length;
             const { error } = await supabase.from('motos').insert([motoObj]);
             if (error) alert(error.message);
         }

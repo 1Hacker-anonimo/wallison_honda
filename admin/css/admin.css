@@ -309,7 +309,35 @@ textarea {
 }
 
 .btn-remove-img:hover {
-    background: #c0392b;
+    background: #cc0000;
+}
+
+.textarea-toolbar {
+    display: flex;
+    gap: 5px;
+    background: #f8f9fa;
+    padding: 5px;
+    border: 1px solid #ddd;
+    border-bottom: none;
+    border-radius: 4px 4px 0 0;
+}
+
+.btn-tool {
+    padding: 2px 10px;
+    background: white;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.btn-tool:hover {
+    background: #eee;
+}
+
+.textarea-toolbar+textarea {
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
 }
 
 .plan-item-edit {

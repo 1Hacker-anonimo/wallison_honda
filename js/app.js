@@ -1,8 +1,12 @@
 let siteData = null;
 
-// Replaces the old LocalStorage-based getData
-function getData() {
-    return siteData;
+// 1. UTILS & HELPERS
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+function parseMarkdown(text) {
+    if (!text) return "";
+    // Bold: **text** -> <strong>text</strong>
+    return text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
 }
 
 // Helper to fix image paths
@@ -98,30 +102,31 @@ window.showDetails = function (id) {
     if (!moto) return;
 
     // Header Info
-    document.getElementById('modal-title').textContent = moto.name;
+    document.getElementById('modal-title').innerHTML = parseMarkdown(moto.name);
 
     // Description Formatting (Bold Titles)
-    // Assuming description has sections separated by periods or already has strong tags
-    // Here we wrap content to ensure bold headings look like the print
-    document.getElementById('modal-desc').innerHTML = moto.description;
+    document.getElementById('modal-desc').innerHTML = parseMarkdown(moto.description);
 
     // Specs Formatting (Key: Value)
     const specsContainer = document.getElementById('modal-specs');
     specsContainer.innerHTML = '';
     if (moto.specs) {
-        const specLines = moto.specs.split(';');
+        // Support both semicolon and newline as separators
+        const specLines = moto.specs.split(/[;\n]/);
         specLines.forEach(line => {
             if (!line.trim()) return;
             const parts = line.split(':');
             if (parts.length > 1) {
                 const item = document.createElement('div');
                 item.className = 'spec-item';
-                item.innerHTML = `<b>${parts[0].trim()}:</b> ${parts[1].trim()}`;
+                // Apply markdown to the value part
+                item.innerHTML = `<b>${parts[0].trim()}:</b> ${parseMarkdown(parts[1].trim())}`;
                 specsContainer.appendChild(item);
             } else {
                 const item = document.createElement('div');
                 item.className = 'spec-item';
-                item.textContent = line.trim();
+                // Apply markdown to the whole line
+                item.innerHTML = parseMarkdown(line.trim());
                 specsContainer.appendChild(item);
             }
         });
