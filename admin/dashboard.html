@@ -159,13 +159,26 @@
                         <input type="text" id="edit-moto-price">
                     </div>
                     <div class="form-group">
-                        <label>Imagem Principal</label>
+                        <label>Imagem Principal (Capa)</label>
                         <div style="display: flex; gap: 10px;">
                             <input type="text" id="edit-moto-img" placeholder="URL da Imagem">
                             <input type="file" id="upload-moto-img" accept="image/*" style="width: auto;">
                         </div>
                     </div>
                 </div>
+
+                <!-- Gallery Section -->
+                <div class="admin-card gallery-admin-section">
+                    <label>Galeria de Imagens (Múltiplas)</label>
+                    <div class="gallery-upload-row">
+                        <input type="file" id="upload-moto-gallery" accept="image/*" multiple class="btn btn-outline">
+                        <small>Você pode selecionar várias imagens de uma vez.</small>
+                    </div>
+                    <div id="moto-gallery-preview" class="gallery-preview-grid">
+                        <!-- Thumbnails will appear here -->
+                    </div>
+                </div>
+
                 <div class="form-group">
                     <label>Descrição</label>
                     <textarea id="edit-moto-desc"></textarea>

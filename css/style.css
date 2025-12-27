@@ -386,9 +386,25 @@ header.scrolled {
 .thumbnails-container {
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-start;
     gap: 1rem;
     margin-bottom: 2.5rem;
+    overflow-x: auto;
+    padding-bottom: 5px;
+    -webkit-overflow-scrolling: touch;
+}
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+.thumbnails-container::-webkit-scrollbar {
+    display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+.thumbnails-container {
+    -ms-overflow-style: none;
+    /* IE and Edge */
+    scrollbar-width: none;
+    /* Firefox */
 }
 
 .thumbnails {
@@ -405,6 +421,8 @@ header.scrolled {
     opacity: 0.6;
     transition: 0.2s;
     border: 1px solid #eee;
+    flex-shrink: 0;
+    /* Prevents thumbnails from shrinking when many exist */
 }
 
 .thumbnails img.active {

@@ -254,6 +254,64 @@ textarea {
     margin-top: 1rem;
 }
 
+/* Gallery Admin Styles */
+.gallery-admin-section {
+    background: #fdfdfd;
+    border: 1px dashed var(--border);
+    margin: 1.5rem 0;
+    padding: 1.2rem;
+}
+
+.gallery-upload-row {
+    margin: 10px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.gallery-preview-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.gallery-item-admin {
+    position: relative;
+    border-radius: 8px;
+    overflow: hidden;
+    aspect-ratio: 4/3;
+    border: 1px solid var(--border);
+}
+
+.gallery-item-admin img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.btn-remove-img {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background: rgba(231, 76, 60, 0.9);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.btn-remove-img:hover {
+    background: #c0392b;
+}
+
 .plan-item-edit {
     display: flex;
     align-items: center;

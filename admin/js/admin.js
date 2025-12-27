@@ -1,6 +1,6 @@
-/**
- * SUPABASE ADMIN JS
- */
+const supabase = window.supabase;
+let currentMotoId = null;
+let currentGallery = [];
 
 document.addEventListener('DOMContentLoaded', async () => {
     try {
@@ -143,6 +143,52 @@ async function handleUpload(fileInputId, urlInputId, bucket) {
     return publicUrl;
 }
 
+// Gallery Upload Handler
+async function handleGalleryUpload(files) {
+    const uploadedUrls = [];
+    for (const file of files) {
+        const fileName = `${Date.now()}_${file.name.replace(/\s/g, '_')}`;
+        const { data, error } = await supabase.storage
+            .from('moto_images')
+            .upload(fileName, file);
+
+        if (error) {
+            console.error("Gallery upload error:", error);
+            continue;
+        }
+
+        const { data: { publicUrl } } = supabase.storage
+            .from('moto_images')
+            .getPublicUrl(fileName);
+
+        uploadedUrls.push(publicUrl);
+    }
+    return uploadedUrls;
+}
+
+function renderGalleryAdmin() {
+    const container = document.getElementById('moto-gallery-preview');
+    if (!container) return;
+    container.innerHTML = '';
+
+    currentGallery.forEach((url, index) => {
+        const item = document.createElement('div');
+        item.className = 'gallery-item-admin';
+        item.innerHTML = `
+            <img src="${url}" alt="Gallery ${index}">
+            <button type="button" class="btn-remove-img" onclick="removeGalleryImage(${index})">
+                <i class="bi bi-x"></i>
+            </button>
+        `;
+        container.appendChild(item);
+    });
+}
+
+window.removeGalleryImage = (index) => {
+    currentGallery.splice(index, 1);
+    renderGalleryAdmin();
+};
+
 function setupAdminActions() {
     // Seller + Banner unified save (or separate)
     document.getElementById('seller-form').onsubmit = async (e) => {
@@ -206,7 +252,20 @@ function setupAdminActions() {
         document.getElementById('moto-form').reset();
         document.getElementById('edit-moto-id').value = '';
         document.getElementById('moto-modal-title').textContent = 'Nova Moto';
+        currentGallery = [];
+        renderGalleryAdmin();
         document.getElementById('moto-modal').style.display = 'block';
+    };
+
+    document.getElementById('upload-moto-gallery').onchange = async (e) => {
+        const files = e.target.files;
+        if (!files.length) return;
+
+        // Show loading or just wait
+        const urls = await handleGalleryUpload(files);
+        currentGallery = [...currentGallery, ...urls];
+        renderGalleryAdmin();
+        e.target.value = ''; // clear input
     };
 
     document.getElementById('btn-close-moto').onclick = () => {
@@ -225,6 +284,7 @@ function setupAdminActions() {
             categoria: document.getElementById('edit-moto-cat').value,
             preco: document.getElementById('edit-moto-price').value,
             imagem_url: document.getElementById('edit-moto-img').value,
+            galeria: currentGallery,
             descricao: document.getElementById('edit-moto-desc').value,
             specs: document.getElementById('edit-moto-specs').value,
             updated_at: new Date()
@@ -257,6 +317,10 @@ window.editMoto = (id) => {
     document.getElementById('edit-moto-img').value = moto.imagem_url;
     document.getElementById('edit-moto-desc').value = moto.descricao;
     document.getElementById('edit-moto-specs').value = moto.specs;
+
+    currentGallery = moto.galeria || [];
+    renderGalleryAdmin();
+
     document.getElementById('moto-modal-title').textContent = 'Editar Moto';
     document.getElementById('moto-modal').style.display = 'block';
 };
