@@ -237,8 +237,8 @@ function setupAdminActions() {
     if (sellerForm) sellerForm.onsubmit = async (e) => {
         e.preventDefault();
 
-        // Upload if file selected
-        await handleUpload('upload-pic', 'edit-pic', 'profile_images');
+        // Upload is handled by Dropzone immediately. 
+        // URL is already in the hidden input.
 
         const updates = {
             id: 1, // ID is required for upsert
@@ -258,8 +258,8 @@ function setupAdminActions() {
     const siteForm = document.getElementById('site-form');
     if (siteForm) siteForm.onsubmit = async (e) => {
         e.preventDefault();
-        await handleUpload('upload-banner', 'edit-banner', 'banners');
-        await handleUpload('upload-logo', 'edit-logo', 'extras');
+
+        // Upload is handled by Dropzone immediately.
 
         const updates = {
             id: 1,
@@ -300,20 +300,21 @@ function setupAdminActions() {
         document.getElementById('moto-modal-title').textContent = 'Nova Moto';
         currentGallery = [];
         renderGalleryAdmin();
+
+        // Clear Dropzone Previews
+        document.querySelectorAll('.dropzone-preview').forEach(el => {
+            el.style.backgroundImage = 'none';
+            el.classList.remove('active');
+        });
+        document.querySelectorAll('.dropzone-content p').forEach(el => {
+            // Reset text (hacky but works for now, or just leave it)
+        });
+
         document.getElementById('moto-modal').style.display = 'block';
     };
 
-    const galleryInput = document.getElementById('upload-moto-gallery');
-    if (galleryInput) galleryInput.onchange = async (e) => {
-        const files = e.target.files;
-        if (!files.length) return;
-
-        // Show loading or just wait
-        const urls = await handleGalleryUpload(files);
-        currentGallery = [...currentGallery, ...urls];
-        renderGalleryAdmin();
-        e.target.value = ''; // clear input
-    };
+    // Old Gallery Input Listener REMOVED to avoid double binding
+    // The new setupGalleryDropzone handles it.
 
     const btnCloseMoto = document.getElementById('btn-close-moto');
     if (btnCloseMoto) btnCloseMoto.onclick = () => {
@@ -325,8 +326,7 @@ function setupAdminActions() {
         e.preventDefault();
         const id = document.getElementById('edit-moto-id').value;
 
-        // Upload if file selected
-        await handleUpload('upload-moto-img', 'edit-moto-img', 'moto_images');
+        // Upload is handled by Dropzone immediately.
 
         const motoObj = {
             nome: document.getElementById('edit-moto-name').value,
@@ -508,6 +508,190 @@ function setupTabSwitching() {
             btn.classList.add('active');
             const target = document.getElementById(`tab-${btn.dataset.tab}`);
             if (target) target.classList.add('active');
+
+            // Close mobile menu on click
+            if (window.innerWidth <= 900) toggleMenu(false);
         };
     });
 }
+
+// Global Menu Toggle
+window.toggleMenu = (forceState) => {
+    const sidebar = document.getElementById('main-sidebar');
+    const overlay = document.querySelector('.sidebar-overlay');
+
+    if (typeof forceState === 'boolean') {
+        if (forceState) {
+            sidebar.classList.add('open');
+            overlay.classList.add('active');
+        } else {
+            sidebar.classList.remove('open');
+            overlay.classList.remove('active');
+        }
+    } else {
+        sidebar.classList.toggle('open');
+        overlay.classList.toggle('active');
+    }
+};
+// ... existing toggleMenu ...
+
+/**
+ * DRAG & DROP LOGIC
+ */
+function setupDropzones() {
+    // 1. Profile
+    setupSingleDropzone('drop-profile', 'upload-pic', 'edit-pic', 'profile_images');
+    // 2. Banner
+    setupSingleDropzone('drop-banner', 'upload-banner', 'edit-banner', 'banners');
+    // 3. Logo
+    setupSingleDropzone('drop-logo', 'upload-logo', 'edit-logo', 'extras');
+    // 4. Moto Main
+    setupSingleDropzone('drop-moto-main', 'upload-moto-img', 'edit-moto-img', 'moto_images');
+    // 5. Moto Gallery (Multiple)
+    setupGalleryDropzone('drop-moto-gallery', 'upload-moto-gallery', 'moto_images');
+}
+
+function setupSingleDropzone(dropId, inputId, urlId, bucket) {
+    const dropArea = document.getElementById(dropId);
+    const input = document.getElementById(inputId);
+    const urlInput = document.getElementById(urlId);
+
+    if (!dropArea || !input) return;
+
+    // Click to Open
+    dropArea.onclick = () => input.click();
+
+    // Drag Events
+    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+        dropArea.addEventListener(eventName, preventDefaults, false);
+    });
+
+    function preventDefaults(e) {
+        e.preventDefault();
+        e.stopPropagation();
+    }
+
+    ['dragenter', 'dragover'].forEach(eventName => {
+        dropArea.addEventListener(eventName, () => dropArea.classList.add('dragover'), false);
+    });
+
+    ['dragleave', 'drop'].forEach(eventName => {
+        dropArea.addEventListener(eventName, () => dropArea.classList.remove('dragover'), false);
+    });
+
+    // Handle Drop
+    dropArea.addEventListener('drop', (e) => {
+        const dt = e.dataTransfer;
+        const files = dt.files;
+        if (files.length) handleFiles(files[0]);
+    });
+
+    // Handle Input Change
+    input.addEventListener('change', (e) => {
+        if (input.files.length) handleFiles(input.files[0]);
+    });
+
+    async function handleFiles(file) {
+        // Validation
+        if (!file.type.startsWith('image/')) {
+            alert('Apenas imagens são permitidas!');
+            return;
+        }
+
+        // UI Loading
+        const loader = dropArea.querySelector('.dropzone-loader');
+        if (loader) loader.classList.add('active');
+
+        // Text Update
+        const textP = dropArea.querySelector('.dropzone-content p');
+        const originalText = textP.textContent;
+        textP.textContent = `Enviando ${file.name}...`;
+
+        // Upload
+        const publicUrl = await uploadFileToSupabase(file, bucket);
+
+        if (publicUrl) {
+            // Update Inputs
+            urlInput.value = publicUrl;
+
+            // Update Preview
+            const preview = dropArea.querySelector('.dropzone-preview');
+            if (preview) {
+                preview.style.backgroundImage = `url('${publicUrl}')`;
+                preview.classList.add('active');
+            }
+            textP.textContent = file.name;
+        } else {
+            textP.textContent = originalText;
+        }
+
+        if (loader) loader.classList.remove('active');
+    }
+}
+
+function setupGalleryDropzone(dropId, inputId, bucket) {
+    const dropArea = document.getElementById(dropId);
+    const input = document.getElementById(inputId);
+
+    if (!dropArea || !input) return;
+
+    dropArea.onclick = () => input.click();
+
+    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+        dropArea.addEventListener(eventName, (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+        }, false);
+    });
+
+    dropArea.addEventListener('dragover', () => dropArea.classList.add('dragover'));
+    dropArea.addEventListener('dragleave', () => dropArea.classList.remove('dragover'));
+    dropArea.addEventListener('drop', (e) => {
+        dropArea.classList.remove('dragover');
+        if (e.dataTransfer.files.length) handleGalleryFiles(e.dataTransfer.files);
+    });
+
+    input.addEventListener('change', () => {
+        if (input.files.length) handleGalleryFiles(input.files);
+    });
+
+    async function handleGalleryFiles(files) {
+        const loader = dropArea.querySelector('.dropzone-loader');
+        if (loader) loader.classList.add('active');
+
+        const fileArray = Array.from(files);
+        const validFiles = fileArray.filter(f => f.type.startsWith('image/'));
+
+        if (validFiles.length < fileArray.length) {
+            alert("Alguns arquivos não eram imagens e foram ignorados.");
+        }
+
+        const urls = await handleGalleryUpload(validFiles); // Uses existing function
+        currentGallery = [...currentGallery, ...urls];
+        renderGalleryAdmin(); // Uses existing function
+
+        if (loader) loader.classList.remove('active');
+        input.value = ''; // Reset
+    }
+}
+
+async function uploadFileToSupabase(file, bucket) {
+    const supabase = getSupabase();
+    const fileName = `${Date.now()}_${file.name.replace(/\s/g, '_')}`;
+    const { data, error } = await supabase.storage.from(bucket).upload(fileName, file);
+
+    if (error) {
+        console.error("Upload Error:", error);
+        alert("Erro no upload: " + error.message);
+        return null;
+    }
+
+    const { data: { publicUrl } } = supabase.storage.from(bucket).getPublicUrl(fileName);
+    return publicUrl;
+}
+
+// Initialize Dropzones on Load
+document.addEventListener('DOMContentLoaded', () => {
+    // ... existing init ...
+    setTimeout(setupDropzones, 1000); // Small delay to ensure DOM
+});

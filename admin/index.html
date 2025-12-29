@@ -5,15 +5,20 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Login - Honda</title>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;600;700&family=Outfit:wght@300;400;600&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="/admin/css/admin.css">
 </head>
 
 <body class="login-page">
     <div class="login-container">
-        <div class="login-card">
-            <h2>Painel Administrativo</h2>
-            <p>Faça login para gerenciar o site</p>
+        <div class="login-card admin-card">
+            <div class="brand" style="margin-bottom: 1rem;">Admin Honda</div>
+            <h2 style="border:none; color: var(--text);">Login</h2>
+            <p style="color: var(--text-muted); margin-bottom: 2rem;">Acesso restrito a gerenciamento.</p>
             <form id="login-form">
                 <div class="form-group">
                     <label>E-mail</label>
@@ -23,8 +28,10 @@
                     <label>Senha</label>
                     <input type="password" id="password" required>
                 </div>
-                <button type="submit" class="btn btn-primary">Entrar</button>
-                <div id="login-error" class="error-msg">Usuário ou senha inválidos.</div>
+                <button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center;">Entrar no
+                    Painel</button>
+                <div id="login-error" class="error-msg" style="color: #ff4444; margin-top: 1rem;">Usuário ou senha
+                    inválidos.</div>
             </form>
         </div>
     </div>

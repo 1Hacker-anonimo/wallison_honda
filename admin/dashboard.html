@@ -5,7 +5,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard - Admin Honda</title>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;600;700&family=Outfit:wght@300;400;600&display=swap"
+        rel="stylesheet">
+
+    <!-- Icons & Styles -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link rel="stylesheet" href="/admin/css/admin.css">
 </head>
@@ -14,15 +21,41 @@
     <!-- Security removed from here, handled at bottom -->
 
     <div class="admin-wrapper">
-        <aside class="sidebar">
-            <div class="brand">Admin Honda</div>
-            <nav>
-                <button class="nav-btn active" data-tab="seller"><i class="bi bi-person"></i> Vendedor</button>
-                <button class="nav-btn" data-tab="motos"><i class="bi bi-bicycle"></i> Motos</button>
-                <button class="nav-btn" data-tab="consortium"><i class="bi bi-calculator"></i> Consórcio</button>
-                <button class="nav-btn" data-tab="financing"><i class="bi bi-bank"></i> Financiamento</button>
-                <button class="nav-btn" id="btn-logout"><i class="bi bi-box-arrow-right"></i> Sair</button>
+        <!-- Overlay -->
+        <div class="sidebar-overlay" onclick="toggleMenu()"></div>
+
+        <!-- Mobile Header (Hidden on Desktop via CSS) -->
+        <div class="mobile-header-bar">
+            <button class="mobile-menu-btn" onclick="toggleMenu()">
+                <i class="bi bi-list"></i>
+            </button>
+            <div class="brand-mobile">Admin Honda</div>
+            <div style="width: 24px;"></div> <!-- Spacer for balance -->
+        </div>
+
+        <aside class="sidebar" id="main-sidebar">
+            <div class="brand">
+                <i class="bi bi-speedometer2"></i> Painel Honda
+            </div>
+            <nav style="flex: 1; display: flex; flex-direction: column; gap: 0.5rem; padding: 0 1rem;">
+                <button class="nav-btn active" data-tab="seller">
+                    <i class="bi bi-person-badge"></i> Vendedor
+                </button>
+                <button class="nav-btn" data-tab="motos">
+                    <i class="bi bi-bicycle"></i> Motos (Catálogo)
+                </button>
+                <button class="nav-btn" data-tab="consortium">
+                    <i class="bi bi-calculator"></i> Planos & Consórcio
+                </button>
+                <button class="nav-btn" data-tab="financing">
+                    <i class="bi bi-bank"></i> Financiamento
+                </button>
             </nav>
+            <div style="padding: 1rem;">
+                <button class="nav-btn" id="btn-logout" style="color: #ff4444;">
+                    <i class="bi bi-box-arrow-right"></i> Sair do Painel
+                </button>
+            </div>
         </aside>
 
         <main class="content">
@@ -38,10 +71,22 @@
                             </div>
                             <div class="form-group">
                                 <label>Foto de Perfil</label>
-                                <div style="display: flex; gap: 10px;">
-                                    <input type="text" id="edit-pic" placeholder="URL da Foto">
-                                    <input type="file" id="upload-pic" accept="image/*" style="width: auto;">
+                                <div class="dropzone-area" id="drop-profile">
+                                    <div class="dropzone-loader">
+                                        <div class="spinner"></div>
+                                    </div>
+                                    <div class="dropzone-preview">
+                                        <div class="dropzone-overlay"><i class="bi bi-cloud-upload"></i>
+                                            <p>Trocar</p>
+                                        </div>
+                                    </div>
+                                    <div class="dropzone-content">
+                                        <i class="bi bi-person-circle"></i>
+                                        <p>Foto de Perfil</p>
+                                    </div>
+                                    <input type="file" id="upload-pic" class="dropzone-input" accept="image/*">
                                 </div>
+                                <input type="hidden" id="edit-pic">
                             </div>
                         </div>
                         <div class="form-group">
@@ -68,17 +113,41 @@
                         <div class="form-row">
                             <div class="form-group">
                                 <label>Imagem do Banner</label>
-                                <div style="display: flex; gap: 10px;">
-                                    <input type="text" id="edit-banner" placeholder="URL do Banner">
-                                    <input type="file" id="upload-banner" accept="image/*" style="width: auto;">
+                                <div class="dropzone-area" id="drop-banner">
+                                    <div class="dropzone-loader">
+                                        <div class="spinner"></div>
+                                    </div>
+                                    <div class="dropzone-preview">
+                                        <div class="dropzone-overlay"><i class="bi bi-cloud-upload"></i>
+                                            <p>Trocar</p>
+                                        </div>
+                                    </div>
+                                    <div class="dropzone-content">
+                                        <i class="bi bi-card-image"></i>
+                                        <p>Banner do Site</p>
+                                    </div>
+                                    <input type="file" id="upload-banner" class="dropzone-input" accept="image/*">
                                 </div>
+                                <input type="hidden" id="edit-banner">
                             </div>
                             <div class="form-group">
                                 <label>Logo do Cabeçalho (Superior Direito)</label>
-                                <div style="display: flex; gap: 10px;">
-                                    <input type="text" id="edit-logo" placeholder="URL do Logo">
-                                    <input type="file" id="upload-logo" accept="image/*" style="width: auto;">
+                                <div class="dropzone-area" id="drop-logo">
+                                    <div class="dropzone-loader">
+                                        <div class="spinner"></div>
+                                    </div>
+                                    <div class="dropzone-preview">
+                                        <div class="dropzone-overlay"><i class="bi bi-cloud-upload"></i>
+                                            <p>Trocar</p>
+                                        </div>
+                                    </div>
+                                    <div class="dropzone-content">
+                                        <i class="bi bi-gem"></i>
+                                        <p>Logo do Site</p>
+                                    </div>
+                                    <input type="file" id="upload-logo" class="dropzone-input" accept="image/*">
                                 </div>
+                                <input type="hidden" id="edit-logo">
                             </div>
                         </div>
                         <button type="submit" class="btn btn-primary">Atualizar Banner</button>
@@ -160,19 +229,38 @@
                     </div>
                     <div class="form-group">
                         <label>Imagem Principal (Capa)</label>
-                        <div style="display: flex; gap: 10px;">
-                            <input type="text" id="edit-moto-img" placeholder="URL da Imagem">
-                            <input type="file" id="upload-moto-img" accept="image/*" style="width: auto;">
+                        <div class="dropzone-area" id="drop-moto-main">
+                            <div class="dropzone-loader">
+                                <div class="spinner"></div>
+                            </div>
+                            <div class="dropzone-preview">
+                                <div class="dropzone-overlay"><i class="bi bi-cloud-upload"></i>
+                                    <p>Trocar</p>
+                                </div>
+                            </div>
+                            <div class="dropzone-content">
+                                <i class="bi bi-image"></i>
+                                <p>Foto de Capa</p>
+                            </div>
+                            <input type="file" id="upload-moto-img" class="dropzone-input" accept="image/*">
                         </div>
+                        <input type="hidden" id="edit-moto-img">
                     </div>
                 </div>
 
                 <!-- Gallery Section -->
                 <div class="admin-card gallery-admin-section">
                     <label>Galeria de Imagens (Múltiplas)</label>
-                    <div class="gallery-upload-row">
-                        <input type="file" id="upload-moto-gallery" accept="image/*" multiple class="btn btn-outline">
-                        <small>Você pode selecionar várias imagens de uma vez.</small>
+                    <div class="dropzone-area" id="drop-moto-gallery">
+                        <div class="dropzone-loader">
+                            <div class="spinner"></div>
+                        </div>
+                        <div class="dropzone-content">
+                            <i class="bi bi-images"></i>
+                            <p>Arraste fotos da galeria aqui</p>
+                            <small>Múltiplos arquivos permitidos</small>
+                        </div>
+                        <input type="file" id="upload-moto-gallery" class="dropzone-input" accept="image/*" multiple>
                     </div>
                     <div id="moto-gallery-preview" class="gallery-preview-grid">
                         <!-- Thumbnails will appear here -->
