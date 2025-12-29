@@ -148,6 +148,14 @@
                                     <input type="file" id="upload-logo" class="dropzone-input" accept="image/*">
                                 </div>
                                 <input type="hidden" id="edit-logo">
+
+                                <div class="toggle-switch-wrapper">
+                                    <label class="toggle-switch">
+                                        <input type="checkbox" id="check-logo-active">
+                                        <span class="slider"></span>
+                                    </label>
+                                    <label for="check-logo-active" class="toggle-label">Exibir Logo no Site</label>
+                                </div>
                             </div>
                         </div>
                         <button type="submit" class="btn btn-primary">Atualizar Banner</button>
@@ -304,9 +312,14 @@
                     <div class="admin-card">
                         <h3>Dados Gerais do Consórcio</h3>
                         <div class="form-group">
-                            <label class="checkbox-label">
-                                <input type="checkbox" id="conf-consortium-enabled"> Ativar botão "Planos de Consórcio"
-                            </label>
+                            <div class="toggle-switch-wrapper">
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="conf-consortium-enabled">
+                                    <span class="slider"></span>
+                                </label>
+                                <label for="conf-consortium-enabled" class="toggle-label">Ativar botão "Planos de
+                                    Consórcio"</label>
+                            </div>
                         </div>
                         <div class="form-group">
                             <label>Valor do Crédito</label>
@@ -326,10 +339,14 @@
                     <div class="admin-card">
                         <h3>Configurações de Repasse</h3>
                         <div class="form-group">
-                            <label class="checkbox-label">
-                                <input type="checkbox" id="conf-transfer-enabled"> Ativar botão "Quero repasse de
-                                consórcio"
-                            </label>
+                            <div class="toggle-switch-wrapper">
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="conf-transfer-enabled">
+                                    <span class="slider"></span>
+                                </label>
+                                <label for="conf-transfer-enabled" class="toggle-label">Ativar botão "Quero repasse de
+                                    consórcio"</label>
+                            </div>
                         </div>
                         <div class="form-group">
                             <label>Texto do Botão</label>
@@ -341,9 +358,14 @@
                             <small>Use {moto} para o nome da moto.</small>
                         </div>
                         <div class="form-group">
-                            <label class="checkbox-label">
-                                <input type="checkbox" id="conf-transfer-mandatory"> Nome e Telefone obrigatórios
-                            </label>
+                            <div class="toggle-switch-wrapper">
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="conf-transfer-mandatory">
+                                    <span class="slider"></span>
+                                </label>
+                                <label for="conf-transfer-mandatory" class="toggle-label">Nome e Telefone
+                                    obrigatórios</label>
+                            </div>
                         </div>
                     </div>
                 </div>

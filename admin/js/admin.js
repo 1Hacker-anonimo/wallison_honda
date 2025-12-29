@@ -88,7 +88,13 @@ function loadSellerForm(data) {
     document.getElementById('edit-instagram').value = p.instagram || '';
     document.getElementById('edit-banner').value = p.banner_image_url || '';
     document.getElementById('edit-logo').value = p.header_logo_url || '';
+
+    // Checkbox (Default to true if undefined)
+    const logoActive = p.header_logo_enabled !== false;
+    document.getElementById('check-logo-active').checked = logoActive;
 }
+
+
 
 function loadFinancingForm(data) {
     const p = data.perfil;
@@ -266,6 +272,7 @@ function setupAdminActions() {
             nome: document.getElementById('edit-name').value || 'Vendedor', // Ensure name is never null
             banner_image_url: document.getElementById('edit-banner').value,
             header_logo_url: document.getElementById('edit-logo').value,
+            header_logo_enabled: document.getElementById('check-logo-active').checked,
             updated_at: new Date()
         };
 

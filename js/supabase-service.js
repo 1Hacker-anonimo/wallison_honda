@@ -72,6 +72,7 @@ const SupabaseService = {
                 site: {
                     bannerImage: perfil.banner_image_url,
                     headerLogo: perfil.header_logo_url,
+                    headerLogoEnabled: perfil.header_logo_enabled,
                     financingTitle: perfil.financing_title,
                     financingBio: perfil.financing_bio,
                     financingHowItWorks: perfil.financing_how_it_works,

@@ -38,8 +38,9 @@ function renderHeader(seller, site) {
         document.getElementById('header-banner').style.backgroundImage = `url('${site.bannerImage}')`;
     }
 
-    if (site.headerLogo) {
+    if (site.headerLogo && site.headerLogoEnabled !== false) {
         document.getElementById('header-logo').src = site.headerLogo;
+        document.getElementById('header-logo').style.display = 'block';
     } else {
         document.getElementById('header-logo').style.display = 'none';
     }
