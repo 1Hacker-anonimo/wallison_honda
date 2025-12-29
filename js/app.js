@@ -40,9 +40,9 @@ function renderHeader(seller, site) {
 
     if (site.headerLogo && site.headerLogoEnabled !== false) {
         document.getElementById('header-logo').src = site.headerLogo;
-        document.getElementById('header-logo').style.display = 'block';
+        document.querySelector('.banner-logo-wrapper').style.display = 'block';
     } else {
-        document.getElementById('header-logo').style.display = 'none';
+        document.querySelector('.banner-logo-wrapper').style.display = 'none';
     }
 
     // Social Actions
