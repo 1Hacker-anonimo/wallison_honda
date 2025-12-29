@@ -265,7 +265,7 @@ window.openFinancing = (id) => {
         <form onsubmit="handleFinancingSubmit(event, '${moto.name}')">
             <div class="form-group-neo"><input type="text" id="fin-name" placeholder="Nome Completo" required></div>
             <div class="form-group-neo"><input type="text" id="fin-cpf" placeholder="CPF" required></div>
-            <div class="form-group-neo"><input type="date" id="fin-birth" required></div>
+            <div class="form-group-neo"><input type="text" id="fin-birth" placeholder="Data de Nascimento" onfocus="(this.type='date')" onblur="(this.type='text')" required></div>
             <div class="form-group-neo"><input type="tel" id="fin-phone" placeholder="WhatsApp" required></div>
             <div class="form-group-neo"><input type="number" id="fin-entry" placeholder="Valor de Entrada (R$)" required></div>
             <div class="form-group-neo">
