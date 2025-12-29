@@ -3,6 +3,40 @@ const getSupabase = () => window.supabase;
 let currentMotoId = null;
 let currentGallery = [];
 
+/**
+ * Toast Notifications System
+ */
+function showToast(message, type = 'success') {
+    let container = document.getElementById('toast-container');
+    if (!container) {
+        container = document.createElement('div');
+        container.id = 'toast-container';
+        document.body.appendChild(container);
+    }
+
+    const toast = document.createElement('div');
+    toast.className = `toast ${type}`;
+
+    // Using Bootstrap Icons (assumed available in admin panel)
+    const iconClass = type === 'success' ? 'bi-check-circle-fill' : 'bi-exclamation-triangle-fill';
+
+    toast.innerHTML = `
+        <div class="toast-icon"><i class="bi ${iconClass}"></i></div>
+        <div class="toast-message">${message}</div>
+    `;
+
+    container.appendChild(toast);
+
+    // Trigger animation
+    setTimeout(() => toast.classList.add('active'), 10);
+
+    // Auto remove after 4s
+    setTimeout(() => {
+        toast.classList.remove('active');
+        setTimeout(() => toast.remove(), 500);
+    }, 4000);
+}
+
 document.addEventListener('DOMContentLoaded', async () => {
     console.log("Admin Dashboard Loading...");
 
@@ -19,7 +53,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const supabase = getSupabase();
     if (!supabase) {
         console.error("Supabase client not initialized.");
-        alert("Erro técnico: O sistema de banco de dados não carregou. Tente atualizar a página.");
+        showToast("Erro técnico: O sistema não carregou corretamente.", "error");
         return;
     }
 
@@ -162,7 +196,7 @@ async function handleUpload(fileInputId, urlInputId, bucket) {
         .upload(fileName, file);
 
     if (error) {
-        alert("Erro no upload: " + error.message);
+        showToast("Erro no upload: " + error.message, "error");
         return null;
     }
 
@@ -257,8 +291,8 @@ function setupAdminActions() {
         };
 
         const { error } = await supabase.from('perfil_vendedor').upsert(updates);
-        if (error) alert("Erro: " + error.message);
-        else alert("Dados salvos!");
+        if (error) showToast("Erro ao salvar: " + error.message, "error");
+        else showToast("Dados do perfil salvos com sucesso!");
     };
 
     const siteForm = document.getElementById('site-form');
@@ -277,8 +311,8 @@ function setupAdminActions() {
         };
 
         const { error } = await supabase.from('perfil_vendedor').upsert(updates);
-        if (error) alert("Erro: " + error.message);
-        else alert("Configurações atualizadas!");
+        if (error) showToast("Erro ao atualizar: " + error.message, "error");
+        else showToast("Configurações do site atualizadas!");
     };
 
     const finForm = document.getElementById('financing-config-form');
@@ -295,8 +329,8 @@ function setupAdminActions() {
         };
 
         const { error } = await supabase.from('perfil_vendedor').upsert(updates);
-        if (error) alert("Erro: " + error.message);
-        else alert("Configurações salvas!");
+        if (error) showToast("Erro ao salvar financiamento: " + error.message, "error");
+        else showToast("Configurações de financiamento salvas!");
     };
 
     // Moto Modal
@@ -348,13 +382,15 @@ function setupAdminActions() {
 
         if (id) {
             const { error } = await supabase.from('motos').update(motoObj).eq('id', id);
-            if (error) alert(error.message);
+            if (error) showToast(error.message, "error");
+            else showToast("Moto atualizada com sucesso!");
         } else {
             // New moto: set default active and order
             motoObj.ativo = true;
             motoObj.order = cachedData.motorcycles.length;
             const { error } = await supabase.from('motos').insert([motoObj]);
-            if (error) alert(error.message);
+            if (error) showToast(error.message, "error");
+            else showToast("Nova moto cadastrada!");
         }
 
         await refreshData();
@@ -389,8 +425,11 @@ window.deleteMoto = async (id) => {
     const supabase = getSupabase();
     if (confirm('Deseja remover esta moto?')) {
         const { error } = await supabase.from('motos').delete().eq('id', id);
-        if (error) alert(error.message);
-        else await refreshData();
+        if (error) showToast("Erro ao deletar: " + error.message, "error");
+        else {
+            showToast("Moto removida com sucesso!");
+            await refreshData();
+        }
     }
 };
 
@@ -460,7 +499,7 @@ function setupConsortiumActions() {
             await supabase.from('planos_consorcio').insert(plansToInsert);
         }
 
-        alert("Configurações de consórcio salvas!");
+        showToast("Configurações de consórcio salvas!");
         document.getElementById('consortium-modal-admin').style.display = 'none';
         await refreshData();
     };
@@ -601,7 +640,7 @@ function setupSingleDropzone(dropId, inputId, urlId, bucket) {
     async function handleFiles(file) {
         // Validation
         if (!file.type.startsWith('image/')) {
-            alert('Apenas imagens são permitidas!');
+            showToast('Apenas imagens são permitidas!', 'error');
             return;
         }
 
@@ -670,7 +709,7 @@ function setupGalleryDropzone(dropId, inputId, bucket) {
         const validFiles = fileArray.filter(f => f.type.startsWith('image/'));
 
         if (validFiles.length < fileArray.length) {
-            alert("Alguns arquivos não eram imagens e foram ignorados.");
+            showToast("Alguns arquivos ignorados (apenas imagens permitidas).", "error");
         }
 
         const urls = await handleGalleryUpload(validFiles); // Uses existing function
@@ -689,7 +728,7 @@ async function uploadFileToSupabase(file, bucket) {
 
     if (error) {
         console.error("Upload Error:", error);
-        alert("Erro no upload: " + error.message);
+        showToast("Erro no upload: " + error.message, "error");
         return null;
     }
 

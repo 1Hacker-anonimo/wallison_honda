@@ -10,6 +10,11 @@ CREATE TABLE IF NOT EXISTS public.profiles (
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now())
 );
 
+ALTER TABLE perfil_vendedor 
+ADD COLUMN IF NOT EXISTS header_logo_enabled BOOLEAN DEFAULT true;
+
+COMMENT ON COLUMN perfil_vendedor.header_logo_enabled IS 'Controls whether the header logo is displayed on the public site';
+
 -- Enable RLS on profiles
 ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
 
