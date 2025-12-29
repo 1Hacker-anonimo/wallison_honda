@@ -579,6 +579,12 @@ ul {
     .drawer-overlay.active .drawer-panel {
         transform: translateX(0);
     }
+
+    /* Fix for cut-off content at the bottom */
+    .drawer-content {
+        padding-bottom: 150px !important;
+        /* Extra space for scrolling past the button */
+    }
 }
 
 /* Update Overlay to be lighter/transparent as requested */
